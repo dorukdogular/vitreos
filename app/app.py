@@ -100,7 +100,7 @@ def render_builder(key_prefix, label):
         )
     with btn_c:
         st.markdown("<div style='margin-top:4px;'></div>", unsafe_allow_html=True)
-        if st.button("Add", key=f"add_{key_prefix}", use_container_width=True):
+        if st.button("Add", key=f"add_{key_prefix}", width='stretch'):
             if sel and sel != "—" and sel not in comp:
                 comp[sel] = 0.0
                 st.rerun()
@@ -111,7 +111,7 @@ def render_builder(key_prefix, label):
         with r_left:
             st.number_input(
                 oxide, min_value=0.0, max_value=100.0,
-                value=comp[oxide], step=0.1,
+                value=float(comp[oxide]), step=0.1,
                 key=f"val_{key_prefix}_{oxide}",
             )
             comp[oxide] = st.session_state[f"val_{key_prefix}_{oxide}"]
@@ -132,15 +132,13 @@ def render_builder(key_prefix, label):
         t = sum(c.values())
         if t > 0:
             for ox in c:
-                v = (c[ox] / t) * 100
-                c[ox] = v
-                st.session_state[f"val_{key_prefix}_{ox}"] = v
+                c[ox] = (c[ox] / t) * 100
 
     n_col, c_col = st.columns(2)
     with n_col:
-        st.button("Normalize", key=f"norm_{key_prefix}", on_click=_normalize_comp, use_container_width=True)
+        st.button("Normalize", key=f"norm_{key_prefix}", on_click=_normalize_comp, width='stretch')
     with c_col:
-        if st.button("Clear", key=f"clear_{key_prefix}", use_container_width=True):
+        if st.button("Clear", key=f"clear_{key_prefix}", width='stretch'):
             st.session_state[state_key] = {}
             st.rerun()
 
@@ -202,7 +200,7 @@ with add_col:
     )
 with btn_col:
     st.markdown("<div style='margin-top:4px;'></div>", unsafe_allow_html=True)
-    if st.button("Add", use_container_width=True):
+    if st.button("Add", width='stretch'):
         if selected_oxide and selected_oxide != "—" and selected_oxide not in st.session_state.composition:
             st.session_state.composition[selected_oxide] = 0.0
             st.rerun()
@@ -245,9 +243,9 @@ def _normalize_sidebar():
 
 norm_col, clear_col = st.sidebar.columns(2)
 with norm_col:
-    st.button("Normalize to 100%", on_click=_normalize_sidebar, use_container_width=True)
+    st.button("Normalize to 100%", on_click=_normalize_sidebar, width='stretch')
 with clear_col:
-    if st.button("Clear all", use_container_width=True):
+    if st.button("Clear all", width='stretch'):
         st.session_state.composition = {}
         st.rerun()
 
@@ -349,7 +347,7 @@ with tab1:
             font=dict(color="#0f172a", size=13),
             showlegend=False, height=350, margin=dict(l=40, r=40, t=40, b=40),
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig, width='stretch')
 
         st.subheader("Input Composition")
         bar_data = pd.Series({k: v for k, v in inputs.items() if v > 0}).reset_index()
@@ -367,7 +365,7 @@ with tab1:
         )
         fig_bar.update_xaxes(gridcolor="#cbd5e1", tickfont=dict(color="#0f172a"))
         fig_bar.update_yaxes(gridcolor="#cbd5e1", tickfont=dict(color="#0f172a"))
-        st.plotly_chart(fig_bar, use_container_width=True)
+        st.plotly_chart(fig_bar, width='stretch')
 
         row = {ox: inputs.get(ox, 0.0) for ox in ALL_OXIDES}
         row.update({
@@ -417,7 +415,7 @@ with tab2:
                 f"{(gfa_a - gfa_b)*100:+.1f}",
             ],
         })
-        st.dataframe(compare_df, use_container_width=True, hide_index=True)
+        st.dataframe(compare_df, width='stretch', hide_index=True)
 
         norms_a = normalize_values((tg_a, dens_a, ri_a, gfa_a))
         norms_b = normalize_values((tg_b, dens_b, ri_b, gfa_b))
@@ -450,7 +448,7 @@ with tab2:
             font=dict(color="#0f172a", size=13),
             showlegend=True, height=400, margin=dict(l=40, r=40, t=40, b=40),
         )
-        st.plotly_chart(fig2, use_container_width=True)
+        st.plotly_chart(fig2, width='stretch')
 
 # ─────────────────────────── TAB 3 ───────────────────────────────────────────
 with tab3:
