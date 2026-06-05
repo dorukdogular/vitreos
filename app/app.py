@@ -270,6 +270,23 @@ with tab1:
         fracs = {k: v / 100.0 for k, v in inputs.items()}
         tg_pred, dens_pred, ri_pred, gfa_prob = predict_all(fracs)
 
+        if st.session_state.get("last_logged") != dict(inputs):
+            try:
+                sb = get_supabase()
+                sb.table("predictions").insert({
+                    "composition":      dict(inputs),
+                    "tg_k":             round(tg_pred, 2),
+                    "tg_c":             round(tg_pred - 273.15, 2),
+                    "density":          round(dens_pred, 4),
+                    "refractive_index": round(ri_pred, 4),
+                    "gfa_pct":          round(gfa_prob * 100, 1),
+                }).execute()
+                st.session_state["last_logged"] = dict(inputs)
+                print("Supabase insert OK:", dict(inputs))
+            except Exception:
+                import traceback
+                print("Supabase error:", traceback.format_exc())
+
         col1, col2, col3, col4 = st.columns(4)
         with col1:
             st.subheader("Tg")
@@ -354,24 +371,6 @@ with tab1:
             mime="text/csv",
         )
 
-        print("Attempting Supabase insert...")
-        print("Composition:", dict(inputs))
-        print("Predictions:", tg_pred, dens_pred, ri_pred, gfa_prob * 100)
-        try:
-            supabase = get_supabase()
-            result = supabase.table("predictions").insert({
-                "composition":      dict(inputs),
-                "tg_k":             round(tg_pred, 2),
-                "tg_c":             round(tg_pred - 273.15, 2),
-                "density":          round(dens_pred, 4),
-                "refractive_index": round(ri_pred, 4),
-                "gfa_pct":          round(gfa_prob * 100, 1),
-            }).execute()
-            print("Insert result:", result)
-        except Exception as e:
-            import traceback
-            print("Supabase error:", traceback.format_exc())
-            st.sidebar.error(f"Supabase error: {e}")
 
 # ─────────────────────────── TAB 2 ───────────────────────────────────────────
 with tab2:
