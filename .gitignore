@@ -11,6 +11,4 @@ data/raw.csv
 data/raw_properties.csv
 data/features.csv
 
-model/*.pkl
-
 memory-bank/

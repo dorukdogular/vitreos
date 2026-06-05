@@ -4,7 +4,11 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 
-st.set_page_config(page_title="Vitreos", layout="wide")
+st.set_page_config(
+    page_title="Vitreos — Glass Property Predictor",
+    page_icon="🔬",
+    layout="wide",
+)
 
 @st.cache_resource
 def load_models():
@@ -24,6 +28,12 @@ all_oxides = list(dict.fromkeys(tg_features + dens_features))
 
 st.title("Vitreos — Glass Property Predictor")
 st.caption("Predict Tg and density from oxide composition")
+st.markdown(
+    "<p style='color:#999; font-size:0.85rem; margin-top:-8px;'>"
+    "Trained on 76,000+ glass compositions from the SciGlass database"
+    "</p>",
+    unsafe_allow_html=True,
+)
 
 st.sidebar.header("Oxide Composition (mol %)")
 inputs = {}
@@ -35,6 +45,16 @@ if abs(total - 100.0) > 0.5:
     st.sidebar.warning(f"Total: {total:.1f} mol% — should be 100")
 else:
     st.sidebar.success(f"Total: {total:.1f} mol%")
+
+st.sidebar.markdown("---")
+st.sidebar.markdown(
+    "<div style='color:#aaa; font-size:0.8rem; line-height:1.6;'>"
+    "<strong>Vitreos v1.0</strong><br>"
+    "Doruk Doğular · 2026<br>"
+    "<a href='https://github.com/dorukdogular/vitreos' style='color:#aaa;'>github.com/dorukdogular/vitreos</a>"
+    "</div>",
+    unsafe_allow_html=True,
+)
 
 if total == 0:
     st.markdown(
@@ -69,3 +89,12 @@ else:
     st.subheader("Input Composition")
     comp_display = {k: v for k, v in inputs.items() if v > 0}
     st.bar_chart(pd.Series(comp_display))
+
+st.markdown("---")
+st.markdown(
+    "<div style='text-align:center; color:#aaa; font-size:0.8rem; padding:8px 0;'>"
+    "Built by <a href='https://github.com/dorukdogular' style='color:#aaa;'>Doruk Doğular</a> · "
+    "<a href='https://github.com/dorukdogular/vitreos' style='color:#aaa;'>⭐ vitreos on GitHub</a>"
+    "</div>",
+    unsafe_allow_html=True,
+)
