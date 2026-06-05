@@ -2,7 +2,7 @@
 > Machine learning model that predicts glass transition temperature, density, and refractive index from oxide composition.
 
 ## Live Website
-[🚀 Launch Vitreos](https://vitreos.streamlit.app)
+[🚀 Launch Vitreos](https://vitreos.streamlit.app) · [🤗 HuggingFace Model](https://huggingface.co/nocontextdoruk/vitreos)
 
 ## What It Does
 Input any oxide glass composition (mol%) → instantly get:
