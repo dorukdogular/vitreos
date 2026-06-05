@@ -168,12 +168,6 @@ for _k in ("composition", "comp_a", "comp_b"):
         st.session_state[_k] = {}
 
 # ── SIDEBAR ───────────────────────────────────────────────────────────────────
-try:
-    sb = get_supabase()
-    st.sidebar.success("DB connected")
-except Exception as e:
-    st.sidebar.error(f"DB connection failed: {e}")
-
 st.sidebar.header("Composition Builder")
 st.sidebar.caption("Used in the Single Glass tab")
 
@@ -278,8 +272,6 @@ with tab1:
         fracs = {k: v / 100.0 for k, v in inputs.items()}
         tg_pred, dens_pred, ri_pred, gfa_prob = predict_all(fracs)
 
-        print("INPUT TYPE:", type(inputs))
-        print("INPUT VALUE:", inputs)
         if st.session_state.get("last_logged") != dict(inputs):
             try:
                 sb = get_supabase()
@@ -292,11 +284,8 @@ with tab1:
                     "gfa_pct":          round(gfa_prob * 100, 1),
                 }).execute()
                 st.session_state["last_logged"] = dict(inputs)
-                print("Supabase insert OK:", dict(inputs))
-            except Exception as e:
-                import traceback
-                print("SUPABASE FULL ERROR:")
-                print(traceback.format_exc())
+            except Exception:
+                pass
 
         col1, col2, col3, col4 = st.columns(4)
         with col1:
