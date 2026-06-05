@@ -354,9 +354,12 @@ with tab1:
             mime="text/csv",
         )
 
+        print("Attempting Supabase insert...")
+        print("Composition:", dict(inputs))
+        print("Predictions:", tg_pred, dens_pred, ri_pred, gfa_prob * 100)
         try:
             supabase = get_supabase()
-            supabase.table("predictions").insert({
+            result = supabase.table("predictions").insert({
                 "composition":      dict(inputs),
                 "tg_k":             round(tg_pred, 2),
                 "tg_c":             round(tg_pred - 273.15, 2),
@@ -364,7 +367,10 @@ with tab1:
                 "refractive_index": round(ri_pred, 4),
                 "gfa_pct":          round(gfa_prob * 100, 1),
             }).execute()
+            print("Insert result:", result)
         except Exception as e:
+            import traceback
+            print("Supabase error:", traceback.format_exc())
             st.sidebar.error(f"Supabase error: {e}")
 
 # ─────────────────────────── TAB 2 ───────────────────────────────────────────
