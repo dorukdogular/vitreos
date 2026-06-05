@@ -126,15 +126,19 @@ def render_builder(key_prefix, label):
         st.rerun()
 
     total_c = sum(comp.values())
+
+    def _normalize_comp():
+        c = st.session_state[state_key]
+        t = sum(c.values())
+        if t > 0:
+            for ox in c:
+                v = (c[ox] / t) * 100
+                c[ox] = v
+                st.session_state[f"val_{key_prefix}_{ox}"] = v
+
     n_col, c_col = st.columns(2)
     with n_col:
-        if st.button("Normalize", key=f"norm_{key_prefix}", use_container_width=True):
-            if total_c > 0:
-                for ox in comp:
-                    normalized = (comp[ox] / total_c) * 100
-                    comp[ox] = normalized
-                    st.session_state[f"val_{key_prefix}_{ox}"] = normalized
-                st.rerun()
+        st.button("Normalize", key=f"norm_{key_prefix}", on_click=_normalize_comp, use_container_width=True)
     with c_col:
         if st.button("Clear", key=f"clear_{key_prefix}", use_container_width=True):
             st.session_state[state_key] = {}
@@ -231,15 +235,17 @@ elif abs(total_sidebar - 100) <= 0.5:
 else:
     st.sidebar.warning(f"⚠ {total_sidebar:.1f} mol% — should be 100")
 
+def _normalize_sidebar():
+    total = sum(st.session_state.composition.values())
+    if total > 0:
+        for ox in st.session_state.composition:
+            v = (st.session_state.composition[ox] / total) * 100
+            st.session_state.composition[ox] = v
+            st.session_state[f"val_{ox}"] = v
+
 norm_col, clear_col = st.sidebar.columns(2)
 with norm_col:
-    if st.button("Normalize to 100%", use_container_width=True):
-        if total_sidebar > 0:
-            for ox in st.session_state.composition:
-                normalized = (st.session_state.composition[ox] / total_sidebar) * 100
-                st.session_state.composition[ox] = normalized
-                st.session_state[f"val_{ox}"] = normalized
-            st.rerun()
+    st.button("Normalize to 100%", on_click=_normalize_sidebar, use_container_width=True)
 with clear_col:
     if st.button("Clear all", use_container_width=True):
         st.session_state.composition = {}
