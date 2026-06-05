@@ -73,20 +73,22 @@ def normalize_values(vals_raw):
 def render_builder(key_prefix, label):
     state_key = f"comp_{key_prefix}"
     ex_key    = f"ex_{key_prefix}"
-    comp      = st.session_state[state_key]
+
+    def _load_example():
+        ex = st.session_state[ex_key]
+        if ex != "— Select —":
+            st.session_state[state_key] = dict(EXAMPLES[ex])
+            st.session_state[ex_key]    = "— Select —"
 
     st.subheader(label)
-
-    ex_choice = st.selectbox(
+    st.selectbox(
         "Load Example",
         options=["— Select —"] + list(EXAMPLES.keys()),
         key=ex_key,
+        on_change=_load_example,
     )
-    if ex_choice != "— Select —":
-        st.session_state[state_key]  = dict(EXAMPLES[ex_choice])
-        st.session_state[ex_key]     = "— Select —"
-        st.rerun()
 
+    comp = st.session_state[state_key]
     remaining_local = [ox for ox in ALL_OXIDES if ox not in comp]
     add_c, btn_c = st.columns([3, 1])
     with add_c:
@@ -165,15 +167,18 @@ for _k in ("composition", "comp_a", "comp_b"):
 st.sidebar.header("Composition Builder")
 st.sidebar.caption("Used in the Single Glass tab")
 
-ex_choice_single = st.sidebar.selectbox(
+def _load_single_example():
+    ex = st.session_state["ex_single"]
+    if ex != "— Select —":
+        st.session_state["composition"] = dict(EXAMPLES[ex])
+        st.session_state["ex_single"]   = "— Select —"
+
+st.sidebar.selectbox(
     "Load Example",
     options=["— Select —"] + list(EXAMPLES.keys()),
     key="ex_single",
+    on_change=_load_single_example,
 )
-if ex_choice_single != "— Select —":
-    st.session_state.composition  = dict(EXAMPLES[ex_choice_single])
-    st.session_state.ex_single    = "— Select —"
-    st.rerun()
 
 remaining = [ox for ox in ALL_OXIDES if ox not in st.session_state.composition]
 add_col, btn_col = st.sidebar.columns([3, 1])
