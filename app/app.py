@@ -164,6 +164,12 @@ for _k in ("composition", "comp_a", "comp_b"):
         st.session_state[_k] = {}
 
 # ── SIDEBAR ───────────────────────────────────────────────────────────────────
+try:
+    sb = get_supabase()
+    st.sidebar.success("DB connected")
+except Exception as e:
+    st.sidebar.error(f"DB connection failed: {e}")
+
 st.sidebar.header("Composition Builder")
 st.sidebar.caption("Used in the Single Glass tab")
 
@@ -358,8 +364,8 @@ with tab1:
                 "refractive_index": round(ri_pred, 4),
                 "gfa_pct":          round(gfa_prob * 100, 1),
             }).execute()
-        except Exception:
-            pass
+        except Exception as e:
+            st.sidebar.error(f"Supabase error: {e}")
 
 # ─────────────────────────── TAB 2 ───────────────────────────────────────────
 with tab2:
