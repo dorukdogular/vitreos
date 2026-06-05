@@ -1,0 +1,16 @@
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+.env
+*.egg-info/
+.ipynb_checkpoints/
+
+data/sciglass_raw/
+data/raw.csv
+data/raw_properties.csv
+data/features.csv
+
+model/*.pkl
+
+memory-bank/
