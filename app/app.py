@@ -131,7 +131,9 @@ def render_builder(key_prefix, label):
         if st.button("Normalize", key=f"norm_{key_prefix}", use_container_width=True):
             if total_c > 0:
                 for ox in comp:
-                    comp[ox] = (comp[ox] / total_c) * 100
+                    normalized = (comp[ox] / total_c) * 100
+                    comp[ox] = normalized
+                    st.session_state[f"val_{key_prefix}_{ox}"] = normalized
                 st.rerun()
     with c_col:
         if st.button("Clear", key=f"clear_{key_prefix}", use_container_width=True):
@@ -234,7 +236,9 @@ with norm_col:
     if st.button("Normalize to 100%", use_container_width=True):
         if total_sidebar > 0:
             for ox in st.session_state.composition:
-                st.session_state.composition[ox] = (st.session_state.composition[ox] / total_sidebar) * 100
+                normalized = (st.session_state.composition[ox] / total_sidebar) * 100
+                st.session_state.composition[ox] = normalized
+                st.session_state[f"val_{ox}"] = normalized
             st.rerun()
 with clear_col:
     if st.button("Clear all", use_container_width=True):
