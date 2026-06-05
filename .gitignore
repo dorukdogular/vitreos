@@ -12,3 +12,4 @@ data/raw_properties.csv
 data/features.csv
 
 memory-bank/
+.streamlit/secrets.toml

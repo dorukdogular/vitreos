@@ -5,3 +5,4 @@ pandas==2.3.3
 numpy==2.4.6
 plotly>=5.18.0
 joblib==1.5.3
+supabase

@@ -28,6 +28,13 @@ def load_models():
 
 tg_model, dens_model, ri_model, gfa_model, tg_features, dens_features, ri_features = load_models()
 
+@st.cache_resource
+def get_supabase():
+    from supabase import create_client
+    url = st.secrets["SUPABASE_URL"]
+    key = st.secrets["SUPABASE_KEY"]
+    return create_client(url, key)
+
 ALL_OXIDES = ["SiO2","P2O5","ZrO2","Na2O","Al2O3","Fe2O3","CaO","MgO","K2O","B2O3",
               "BaO","ZnO","Li2O","SrO","La2O3","TiO2","Nb2O5","PbO","Sb2O3","Bi2O3","TeO2","Se"]
 
@@ -335,6 +342,19 @@ with tab1:
             file_name="vitreos_prediction.csv",
             mime="text/csv",
         )
+
+        try:
+            supabase = get_supabase()
+            supabase.table("predictions").insert({
+                "composition":      dict(inputs),
+                "tg_k":             round(tg_pred, 2),
+                "tg_c":             round(tg_pred - 273.15, 2),
+                "density":          round(dens_pred, 4),
+                "refractive_index": round(ri_pred, 4),
+                "gfa_pct":          round(gfa_prob * 100, 1),
+            }).execute()
+        except Exception:
+            pass
 
 # ─────────────────────────── TAB 2 ───────────────────────────────────────────
 with tab2:
