@@ -18,15 +18,17 @@ def load_models():
         dens_model = pickle.load(f)
     with open("model/ri_regressor.pkl", "rb") as f:
         ri_model = pickle.load(f)
+    with open("model/gfa_classifier_v2.pkl", "rb") as f:
+        gfa_model = pickle.load(f)
     with open("model/tg_features.json") as f:
         tg_features = json.load(f)
     with open("model/density_features.json") as f:
         dens_features = json.load(f)
     with open("model/ri_features.json") as f:
         ri_features = json.load(f)
-    return tg_model, dens_model, ri_model, tg_features, dens_features, ri_features
+    return tg_model, dens_model, ri_model, gfa_model, tg_features, dens_features, ri_features
 
-tg_model, dens_model, ri_model, tg_features, dens_features, ri_features = load_models()
+tg_model, dens_model, ri_model, gfa_model, tg_features, dens_features, ri_features = load_models()
 
 ALL_OXIDES = ["SiO2","P2O5","ZrO2","Na2O","Al2O3","Fe2O3","CaO","MgO","K2O","B2O3","BaO","ZnO","Li2O","SrO","La2O3","TiO2","Nb2O5","PbO","Sb2O3","Bi2O3","TeO2","Se"]
 
@@ -134,8 +136,8 @@ else:
     dens_pred = dens_model.predict(dens_input)[0]
     ri_input = pd.DataFrame([[fracs.get(f, 0.0) for f in ri_features]], columns=ri_features)
     ri_pred = ri_model.predict(ri_input)[0]
-
-    gfa_prob = 0.72
+    gfa_input = pd.DataFrame([[fracs.get(f, 0.0) for f in tg_features]], columns=tg_features)
+    gfa_prob = float(gfa_model.predict_proba(gfa_input)[0][1])
 
     col1, col2, col3, col4 = st.columns(4)
 
@@ -162,7 +164,7 @@ else:
             f"<div style='font-size:2rem; color:{gfa_color}; font-weight:bold; margin-bottom:4px;'>{gfa_prob*100:.0f}%</div>",
             unsafe_allow_html=True,
         )
-        st.caption("Placeholder — model uses element features")
+        st.caption("RF classifier (acc=0.67, oxide features)")
 
     tg_norm = float(np.clip((tg_pred - 300) / (1500 - 300), 0, 1))
     dens_norm = float(np.clip((dens_pred - 1.5) / (8.0 - 1.5), 0, 1))
