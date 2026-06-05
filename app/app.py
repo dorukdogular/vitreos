@@ -1,4 +1,5 @@
-import json, pickle
+import json
+import joblib
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -12,14 +13,10 @@ st.set_page_config(
 
 @st.cache_resource
 def load_models():
-    with open("model/tg_regressor.pkl", "rb") as f:
-        tg_model = pickle.load(f)
-    with open("model/density_regressor.pkl", "rb") as f:
-        dens_model = pickle.load(f)
-    with open("model/ri_regressor.pkl", "rb") as f:
-        ri_model = pickle.load(f)
-    with open("model/gfa_classifier_v2.pkl", "rb") as f:
-        gfa_model = pickle.load(f)
+    tg_model   = joblib.load("model/tg_regressor.pkl")
+    dens_model = joblib.load("model/density_regressor.pkl")
+    ri_model   = joblib.load("model/ri_regressor.pkl")
+    gfa_model  = joblib.load("model/gfa_classifier_v2.pkl")
     with open("model/tg_features.json") as f:
         tg_features = json.load(f)
     with open("model/density_features.json") as f:
