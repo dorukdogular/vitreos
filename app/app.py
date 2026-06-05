@@ -270,6 +270,8 @@ with tab1:
         fracs = {k: v / 100.0 for k, v in inputs.items()}
         tg_pred, dens_pred, ri_pred, gfa_prob = predict_all(fracs)
 
+        print("INPUT TYPE:", type(inputs))
+        print("INPUT VALUE:", inputs)
         if st.session_state.get("last_logged") != dict(inputs):
             try:
                 sb = get_supabase()
@@ -283,9 +285,10 @@ with tab1:
                 }).execute()
                 st.session_state["last_logged"] = dict(inputs)
                 print("Supabase insert OK:", dict(inputs))
-            except Exception:
+            except Exception as e:
                 import traceback
-                print("Supabase error:", traceback.format_exc())
+                print("SUPABASE FULL ERROR:")
+                print(traceback.format_exc())
 
         col1, col2, col3, col4 = st.columns(4)
         with col1:
