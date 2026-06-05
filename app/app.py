@@ -4,6 +4,7 @@ import numpy as np
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
+import plotly.express as px
 
 st.set_page_config(
     page_title="Vitreos — Glass Property Predictor",
@@ -281,16 +282,44 @@ with tab1:
         cats_closed = categories + [categories[0]]
 
         fig = go.Figure(go.Scatterpolar(
-            r=vals_closed, theta=cats_closed, fill="toself", line_color="#4C9BE8",
+            r=vals_closed, theta=cats_closed, fill="toself",
+            line_color="#2563eb",
+            fillcolor="rgba(37,99,235,0.15)",
         ))
         fig.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+            polar=dict(
+                bgcolor="rgba(0,0,0,0)",
+                radialaxis=dict(
+                    visible=True, range=[0, 1],
+                    gridcolor="#cbd5e1", tickfont=dict(color="#0f172a"),
+                ),
+                angularaxis=dict(
+                    gridcolor="#cbd5e1", tickfont=dict(color="#0f172a"),
+                ),
+            ),
+            paper_bgcolor="rgba(0,0,0,0)",
+            font=dict(color="#0f172a", size=13),
             showlegend=False, height=350, margin=dict(l=40, r=40, t=40, b=40),
         )
         st.plotly_chart(fig, use_container_width=True)
 
         st.subheader("Input Composition")
-        st.bar_chart(pd.Series({k: v for k, v in inputs.items() if v > 0}))
+        bar_data = pd.Series({k: v for k, v in inputs.items() if v > 0}).reset_index()
+        bar_data.columns = ["Oxide", "mol%"]
+        fig_bar = px.bar(
+            bar_data, x="Oxide", y="mol%",
+            color_discrete_sequence=["#2563eb"],
+            template="plotly_white",
+        )
+        fig_bar.update_layout(
+            paper_bgcolor="rgba(0,0,0,0)",
+            plot_bgcolor="rgba(0,0,0,0)",
+            font=dict(color="#0f172a"),
+            margin=dict(l=0, r=0, t=20, b=0),
+        )
+        fig_bar.update_xaxes(gridcolor="#cbd5e1", tickfont=dict(color="#0f172a"))
+        fig_bar.update_yaxes(gridcolor="#cbd5e1", tickfont=dict(color="#0f172a"))
+        st.plotly_chart(fig_bar, use_container_width=True)
 
         row = {ox: inputs.get(ox, 0.0) for ox in ALL_OXIDES}
         row.update({
@@ -349,14 +378,27 @@ with tab2:
         fig2 = go.Figure()
         fig2.add_trace(go.Scatterpolar(
             r=norms_a + [norms_a[0]], theta=cats_closed, fill="toself",
-            line_color="#4C9BE8", name="Glass A", opacity=0.7,
+            line_color="#2563eb", fillcolor="rgba(37,99,235,0.15)",
+            name="Glass A",
         ))
         fig2.add_trace(go.Scatterpolar(
             r=norms_b + [norms_b[0]], theta=cats_closed, fill="toself",
-            line_color="#E8844C", name="Glass B", opacity=0.7,
+            line_color="#f97316", fillcolor="rgba(249,115,22,0.15)",
+            name="Glass B",
         ))
         fig2.update_layout(
-            polar=dict(radialaxis=dict(visible=True, range=[0, 1])),
+            polar=dict(
+                bgcolor="rgba(0,0,0,0)",
+                radialaxis=dict(
+                    visible=True, range=[0, 1],
+                    gridcolor="#cbd5e1", tickfont=dict(color="#0f172a"),
+                ),
+                angularaxis=dict(
+                    gridcolor="#cbd5e1", tickfont=dict(color="#0f172a"),
+                ),
+            ),
+            paper_bgcolor="rgba(0,0,0,0)",
+            font=dict(color="#0f172a", size=13),
             showlegend=True, height=400, margin=dict(l=40, r=40, t=40, b=40),
         )
         st.plotly_chart(fig2, use_container_width=True)
