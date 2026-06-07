@@ -22,10 +22,16 @@ Input any oxide glass composition (mol%) → instantly get:
 ## Model Performance
 | Property | Samples | R² | MAE |
 |---|---|---|---|
-| Tg | 76,377 | 0.89 | 32 K |
-| Density | 31,173 | 0.90 | 0.21 g/cm³ |
-| Refractive Index | 58,913 | 0.92 | 0.021 |
-| GFA | 11,858 | — | 67% acc |
+| Tg | 76,377 | 0.85 | 44 K |
+| Density | 31,173 | 0.88 | 0.26 g/cm³ |
+| Refractive Index | 58,913 | 0.83 | 0.036 |
+| GFA | 11,858 | — | 69% acc |
+
+![Predicted vs Actual](model/pred_vs_actual_all.png)
+
+![Metrics Summary](model/metrics_summary.png)
+
+![Feature Importance](model/feature_importance_all.png)
 
 ## Data
 [SciGlass](https://github.com/epam/SciGlass) — 422,000+ inorganic glass compositions, ODbL license.
